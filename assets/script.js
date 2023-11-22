@@ -21,3 +21,41 @@ $(function () {
   //
   // TODO: Add code to display the current date in the header of the page.
 });
+
+function displayCurrentDate() {
+  // display date at top in MMMM dd, YYYY format
+}
+
+function displayCurrentDayEvents() {
+  // show all time slots 9am - 5pm
+}
+
+function addTimeSlot(hour, event) {
+  const relativeClass = getRelativeClass();
+  // get relative class (past, present, future)
+  // add hour and event to slot
+  // add slot to list using relative class for styling
+
+  /*
+      <div id="hour-9" class="row time-block past">
+        <div class="col-2 col-md-1 hour text-center py-3">9AM</div>
+        <textarea class="col-8 col-md-10 description" rows="3"> </textarea>
+        <button class="btn saveBtn col-2 col-md-1" aria-label="save">
+          <i class="fas fa-save" aria-hidden="true"></i>
+        </button>
+      </div>
+  */
+}
+
+function getRelativeClass(time) {
+  // return 'past', 'present', or 'future' depending on time
+  // relative to current time 
+}
+
+function getEvents() {
+  // return event array from localStorage
+}
+
+function saveEvent(event, time) {
+  // add event to event array in localStorage
+}
