@@ -33,17 +33,24 @@ function displayCurrentDate() {
 
 function displayCurrentDayEvents() {
   // show all time slots 9am - 5pm
+  const calendar = $('#calendar');
+
+  for (let hour = 9; hour <= 17; hour++) {
+    const timeSlot = createTimeSlot(hour, 'haircut');
+    calendar.append(timeSlot);
+  }
 }
 
 function createTimeSlot(hour, event) {
   // add hour and event to slot
   // add slot to list using relative class for styling
+  console.log("hour", hour)
   const timeDisplay = createTimeDisplay(hour);
   const textArea = createTextArea(event);
   const button = createButton();
 
   const timeSlot = $('<div>');
-  timeSlot.addClass('row time-block ' + getRelativeClass());
+  timeSlot.addClass('row time-block ' + getRelativeClass(hour));
   timeSlot.id = `hour-${hour}`;
 
   timeSlot.append(timeDisplay);
@@ -54,17 +61,19 @@ function createTimeSlot(hour, event) {
 }
 
 function createTimeDisplay(hour) {
-  const timeDisplay = $('<div>');
-  timeDisplay.addClass('col-2 col-md-1 hour text-center py-3');
-  timeDisplay.text = hour;
-  return timeDisplay;
+  const timeDisplayContainer = $('<div>');
+  timeDisplayContainer.addClass('col-2 col-md-1 hour text-center py-3');
+  const timeDisplay = $('<span>');
+  timeDisplay.text(hour);
+  timeDisplayContainer.append(timeDisplay);
+  return timeDisplayContainer;
 }
 
 function createTextArea(event) {
   const textArea = $('<textarea>');
   textArea.addClass('col-8 col-md-10 description');
   textArea.attr('rows', '3');
-  textArea.text = event;
+  textArea.text(event);
   return textArea;
 }
 
@@ -84,18 +93,18 @@ function createButton() {
 function getRelativeClass(hour) {
   // return 'past', 'present', or 'future' depending on time
   // relative to current time 
-  const currentHour = dayjs().hour;
+  const currentHour = dayjs().hour();
 
   if (currentHour === hour) {
     return 'present';
   }
 
-  return currentHour > hour ? "past" : "future";
+  return (currentHour > hour) ? 'past' : 'future';
 }
 
 function getEvents() {
   // return event array from localStorage
-  const events = JSON.parse(localStorage.getItem("events"));
+  const events = JSON.parse(localStorage.getItem('events'));
   return events;
 }
 
@@ -103,5 +112,5 @@ function saveEvent(event, hour) {
   // add event to event array in localStorage
   const events = getEvents();
   events[hour] = event;
-  localStorage.setItem("events", JSON.stringify(events));
+  localStorage.setItem('events', JSON.stringify(events));
 }
