@@ -1,3 +1,8 @@
+const EVENTS_KEY = 'events';
+const PAST_CLASS = 'past';
+const PRESENT_CLASS = 'present';
+const FUTURE_CLASS = 'future';
+
 // Wrap all code that interacts with the DOM in a call to jQuery to ensure that
 // the code isn't run until the browser has finished rendering all the elements
 // in the html.
@@ -34,9 +39,10 @@ function displayCurrentDate() {
 function displayCurrentDayEvents() {
   // show all time slots 9am - 5pm
   const calendar = $('#calendar');
+  const events = getEvents();
 
   for (let hour = 9; hour <= 17; hour++) {
-    const timeSlot = createTimeSlot(hour, 'haircut');
+    const timeSlot = createTimeSlot(hour, events[hour]);
     calendar.append(timeSlot);
   }
 }
@@ -44,10 +50,9 @@ function displayCurrentDayEvents() {
 function createTimeSlot(hour, event) {
   // add hour and event to slot
   // add slot to list using relative class for styling
-  console.log("hour", hour)
   const timeDisplay = createTimeDisplay(hour);
   const textArea = createTextArea(event);
-  const button = createButton();
+  const button = createButton(hour, textArea);
 
   const timeSlot = $('<div>');
   timeSlot.addClass('row time-block ' + getRelativeClass(hour));
@@ -73,12 +78,12 @@ function createTextArea(event) {
   const textArea = $('<textarea>');
   textArea.addClass('col-8 col-md-10 description');
   textArea.attr('rows', '3');
-  textArea.text(event);
+  textArea.val(event);
   return textArea;
 }
 
 //createButton creates the icon and button
-function createButton() {
+function createButton(hour, textArea) {
   const icon = $('<i>');
   icon.addClass('fas fa-save');
   icon.attr('aria-hidden', 'true');
@@ -86,6 +91,7 @@ function createButton() {
   const button = $('<button>');
   button.addClass('btn saveBtn col-2 col-md-1');
   button.attr('aria-label', 'save');
+  button.on('click', () => { saveEvent(textArea.val(), hour); });
   button.append(icon);
   return button;
 }
@@ -96,15 +102,21 @@ function getRelativeClass(hour) {
   const currentHour = dayjs().hour();
 
   if (currentHour === hour) {
-    return 'present';
+    return PRESENT_CLASS;
   }
 
-  return (currentHour > hour) ? 'past' : 'future';
+  return (currentHour > hour) ? PAST_CLASS : FUTURE_CLASS;
 }
 
 function getEvents() {
   // return event array from localStorage
-  const events = JSON.parse(localStorage.getItem('events'));
+  const events = JSON.parse(localStorage.getItem(EVENTS_KEY));
+  
+  if (events === null) {
+    localStorage.setItem(EVENTS_KEY, JSON.stringify([]));
+    return [];
+  }
+
   return events;
 }
 
@@ -112,5 +124,5 @@ function saveEvent(event, hour) {
   // add event to event array in localStorage
   const events = getEvents();
   events[hour] = event;
-  localStorage.setItem('events', JSON.stringify(events));
+  localStorage.setItem(EVENTS_KEY, JSON.stringify(events));
 }
