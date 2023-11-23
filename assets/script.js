@@ -2,6 +2,9 @@
 // the code isn't run until the browser has finished rendering all the elements
 // in the html.
 $(function () {
+  displayCurrentDate();
+  displayCurrentDayEvents();
+
   // TODO: Add a listener for click events on the save button. This code should
   // use the id in the containing time-block as a key to save the user input in
   // local storage. HINT: What does `this` reference in the click listener
@@ -24,6 +27,8 @@ $(function () {
 
 function displayCurrentDate() {
   // display date at top in MMMM dd, YYYY format
+  const currentDate = dayjs();
+  $('#currentDay').text(currentDate.format('MMMM D, YYYY'));
 }
 
 function displayCurrentDayEvents() {
@@ -31,11 +36,18 @@ function displayCurrentDayEvents() {
 }
 
 function addTimeSlot(hour, event) {
-  const relativeClass = getRelativeClass();
   // get relative class (past, present, future)
+  const relativeClass = getRelativeClass();
+
   // add hour and event to slot
   // add slot to list using relative class for styling
-
+  const icon = $('<i>');
+  icon.addClass('fas fa-save');
+  icon.attr('aria-hidden', 'true');
+  const button = $('<button>');
+  button.addClass('btn saveBtn col-2 col-md-1');
+  button.attr('aria-label', 'save');
+  button.append(icon);
   /*
       <div id="hour-9" class="row time-block past">
         <div class="col-2 col-md-1 hour text-center py-3">9AM</div>
@@ -47,15 +59,27 @@ function addTimeSlot(hour, event) {
   */
 }
 
-function getRelativeClass(time) {
+function getRelativeClass(hour) {
   // return 'past', 'present', or 'future' depending on time
   // relative to current time 
+  const currentHour = dayjs().hour;
+
+  if (currentHour === hour) {
+    return 'present';
+  }
+
+  return currentHour > hour ? "past" : "future";
 }
 
 function getEvents() {
   // return event array from localStorage
+  const events = JSON.parse(localStorage.getItem("events"));
+  return events;
 }
 
-function saveEvent(event, time) {
+function saveEvent(event, hour) {
   // add event to event array in localStorage
+  const events = getEvents();
+  events[hour] = event;
+  localStorage.setItem("events", JSON.stringify(events));
 }
