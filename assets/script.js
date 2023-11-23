@@ -35,28 +35,50 @@ function displayCurrentDayEvents() {
   // show all time slots 9am - 5pm
 }
 
-function addTimeSlot(hour, event) {
-  // get relative class (past, present, future)
-  const relativeClass = getRelativeClass();
-
+function createTimeSlot(hour, event) {
   // add hour and event to slot
   // add slot to list using relative class for styling
+  const timeDisplay = createTimeDisplay(hour);
+  const textArea = createTextArea(event);
+  const button = createButton();
+
+  const timeSlot = $('<div>');
+  timeSlot.addClass('row time-block ' + getRelativeClass());
+  timeSlot.id = `hour-${hour}`;
+
+  timeSlot.append(timeDisplay);
+  timeSlot.append(textArea);
+  timeSlot.append(button);
+
+  return timeSlot;
+}
+
+function createTimeDisplay(hour) {
+  const timeDisplay = $('<div>');
+  timeDisplay.addClass('col-2 col-md-1 hour text-center py-3');
+  timeDisplay.text = hour;
+  return timeDisplay;
+}
+
+function createTextArea(event) {
+  const textArea = $('<textarea>');
+  textArea.addClass('col-8 col-md-10 description');
+  textArea.attr('rows', '3');
+  textArea.text = event;
+  return textArea;
+}
+
+//createButton creates the icon and button
+function createButton() {
   const icon = $('<i>');
   icon.addClass('fas fa-save');
   icon.attr('aria-hidden', 'true');
+
   const button = $('<button>');
   button.addClass('btn saveBtn col-2 col-md-1');
   button.attr('aria-label', 'save');
   button.append(icon);
-  /*
-      <div id="hour-9" class="row time-block past">
-        <div class="col-2 col-md-1 hour text-center py-3">9AM</div>
-        <textarea class="col-8 col-md-10 description" rows="3"> </textarea>
-        <button class="btn saveBtn col-2 col-md-1" aria-label="save">
-          <i class="fas fa-save" aria-hidden="true"></i>
-        </button>
-      </div>
-  */
+  return button;
 }
 
 function getRelativeClass(hour) {
